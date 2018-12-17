@@ -4,8 +4,8 @@ var qiniu = require("qiniu"),
 var router = express.Router();
 
 //用户的Access Key和Secret Key
-var accessKey = "RuYn-ZnaiS_Sfj5WZ2VqVvSIFzUNvPGvGVj_k3hm";
-var secretKey = "1T5pVMOa4xpLxO-Ebq50x-ezjhc_O1Q5veflWdJJ";
+var accessKey = "Access Key";
+var secretKey = "Secret Key";
 var mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
 
 //要上传的空间
