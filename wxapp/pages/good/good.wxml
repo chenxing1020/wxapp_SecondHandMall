@@ -65,7 +65,7 @@
 
       <view class="cell_flex">
         <view class="comment_in_wrap cell_flex">
-          <input class="comment_in" placeholder='{{cmtAt}}' bindinput='inputChange'></input>
+          <input class="comment_in" placeholder='{{cmtAt}}' bindinput='inputChange' value='{{cmt}}'></input>
         </view>
         <view class="comment_btn_wrap" bindtap='submitComment'>发送</view>
       </view>
@@ -116,9 +116,11 @@
 
   <!--底部tab-->
   <view class="bottom_tab_wrap">
-    <view class="bottom_tab">
-      <image class="tab_icon" src="/images/gtab/f_s.png" />
-      <text class="text_warp">收藏</text>
+    <view class="bottom_tab" bindtap='changeFavor'>
+      <image wx:if="{{hasFavor}}" class="tab_icon" src="/images/gtab/f_s.png" />
+      <image wx:else class="tab_icon" src="/images/gtab/f.png" />
+      <text wx:if="{{hasFavor}}" class="text_warp">已收藏</text>
+      <text wx:else class="text_warp">收藏</text>
     </view>
     <view class="bottom_tab">
       <image class="tab_icon" src="/images/gtab/m.png" />

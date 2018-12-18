@@ -1,13 +1,13 @@
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/goods', { useNewUrlParser: true });
 var Model = {};
-//商品Schema和Model
+//商品信息表
 var goodSchema = new mongoose.Schema({
     uId: { type: String, required: true, },
     uName: String,
     uAva: String,
     uPlace: Number,
-    uCollege:Number,
+    uCollege: Number,
     sId: Number,
     title: String,
     describe: String,
@@ -19,9 +19,9 @@ var goodSchema = new mongoose.Schema({
 }, { versionKey: false });
 Model.goodModel = mongoose.model('goodModel', goodSchema);    //goodModel即collection名,在mongdb中会生成
 
-//用户Schema和Model
+//用户信息表
 var userSchema = new mongoose.Schema({
-    uId: { type: String, require: true},
+    uId: { type: String, require: true },
     stuId: String,
     uName: String,
     uAva: String,
@@ -31,18 +31,27 @@ var userSchema = new mongoose.Schema({
 Model.userModel = mongoose.model('userModel', userSchema);
 
 //商品评论表
-var commentSchema=new mongoose.Schema({
-    gId:{type:mongoose.Schema.ObjectId,ref:'goodModel'},
-    uId:String,
-    uAva:String,
-    uName:String,
-    cuId:String,
-    cuName:String,
-    cmt:String,
-    createAt:{type:Date,default:Date.now}
-},{versionKey:false});
-Model.commentModel=mongoose.model('commentModel',commentSchema);
+var commentSchema = new mongoose.Schema({
+    gId: { type: mongoose.Schema.ObjectId, ref: 'goodModel' },
+    uId: String,
+    uAva: String,
+    uName: String,
+    cuId: String,
+    cuName: String,
+    cmt: String,
+    createAt: { type: Date, default: Date.now }
+}, { versionKey: false });
+Model.commentModel = mongoose.model('commentModel', commentSchema);
 
-//收藏表
+//私信表
+var messageSchema = new mongoose.Schema({
+    uId: String,
+    uAva: String,
+    uName: String,
+    muId: String,
+    msg: String,
+    createAt: { type: Date, default: Date.now }
+}, { versionKey: false });
+Model.messageModel = mongoose.model('messageModel', messageSchema);
 
 module.exports = Model;

@@ -7,7 +7,7 @@ Page({
     cmtAt: '询问更多，欢迎留个言',
     cmtAtName: null,
     cmtAtId: null,
-    cmt: null,
+    cmt: "",
     gId: null,
     gData: {},
     cmtData: {},
@@ -15,12 +15,12 @@ Page({
     swiperCurrent: 0,
     userInfo: {},
     hasUserInfo: false,
+    hasFavor: false
   },
 
   onLoad: function(options) {
     var that = this;
     that.data.gId = options._id;
-
     wx.showLoading({
       title: '加载中'
     });
@@ -33,14 +33,15 @@ Page({
       },
       success: function(res) {
         wx.hideLoading();
+        let hf = wx.getStorageSync(options._id)
+        if (!hf) hf = false;
         that.setData({
           gData: res.data.gData,
           cmtData: res.data.cmtData,
+          hasFavor: hf
         })
-
       },
     });
-
   },
 
   onShow: function() {
@@ -54,21 +55,6 @@ Page({
     }
   },
 
-  //加载评论
-  loadComment: function() {
-    let that = this;
-    wx.request({
-      url: app.globalData.requestUrl + 'comment',
-      data: {
-        gId: that.data.gId
-      },
-      success: function(res) {
-        that.setData({
-          cmtData: res.data,
-        })
-      },
-    })
-  },
   //滑块视图切换事件
   swiperChange: function(e) {
     if (e.detail.source == 'touch') {
@@ -109,22 +95,36 @@ Page({
           cmt: that.data.cmt
         },
         success: function(res) {
-          //评论成功就将留言置空
+          //评论成功就将刷新留言
+          that.loadComment();
           wx.showToast({
             title: '留言成功！',
             icon: 'none',
             mask: true,
             duration: 2000
           });
-          that.setData({
-            cmt: null
-          })
-
         },
       });
-      that.loadComment();
     }
   },
+
+  //刷新评论并将输入框置空
+  loadComment: function() {
+    let that = this;
+    wx.request({
+      url: app.globalData.requestUrl + 'comment',
+      data: {
+        gId: that.data.gId
+      },
+      success: function(res) {
+        that.setData({
+          cmtData: res.data,
+          cmt: ""
+        })
+      },
+    })
+  },
+
 
   //点击评论指定回复
   commentAt: function(e) {
@@ -144,6 +144,23 @@ Page({
 
   inputChange: function(e) {
     this.data.cmt = e.detail.value;
-  }
+  },
 
+  //收藏
+  changeFavor: function() {
+    let that = this;
+    let hf = that.data.hasFavor;
+    console.log(hf);
+    if (hf == false) {
+      wx.setStorageSync(this.data.gId, true);
+      hf = true;
+    } else {
+      wx.removeStorageSync(this.data.gId);
+      hf = false;
+    }
+    that.setData({
+      hasFavor: hf
+    })
+
+  }
 })

@@ -1,4 +1,5 @@
 var express = require('express'),
+    mongoose = require('mongoose'),
     getDateDiff = require('../utils/utils'),
     Model = require('../models/model');//调用自定义的Mongoose Model
 
@@ -35,18 +36,23 @@ router.get('/sections', function (req, res) {
 
 //商品信息和评论单页
 router.get('/good', function (req, res) {
-    var _id = req.query._id;
-    goodModel.find({'_id':_id}, function (err, docs) {
-        commentModel.find({ 'gId': _id }, function (err, docs1) {
-            for (var item in docs1) {
-                let time = getDateDiff(docs1[item]["createAt"]);
-                docs1[item]["createAt"] = time;
+    var _id = mongoose.Types.ObjectId(req.query._id);
+
+    goodModel.aggregate([
+        { $lookup: { from: "commentmodels", localField: "_id", foreignField: "gId", as: "cmt" } },
+        { $match: { "_id": _id } }
+    ], function (err, docs) {
+        let gData = docs[0];
+        let cmtData = [];
+        if ("cmt" in gData) {
+            cmtData = gData["cmt"];
+            delete gData["cmt"];
+            for (var item in cmtData) {
+                let time = getDateDiff(cmtData[item]["createAt"]);
+                cmtData[item]["createAt"] = time;
             }
-            res.json({
-                gData: docs[0],
-                cmtData: docs1
-            });
-        }).sort({ 'createAt': 1 }).lean().select('-_id -gId');
+        }
+        res.json({ gData: gData, cmtData: cmtData });
     });
 });
 
