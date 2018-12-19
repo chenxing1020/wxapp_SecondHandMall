@@ -507,6 +507,43 @@ bindInput: function(e) {
 >1.[MongoDB 进阶模式设计](http://www.mongoing.com/mongodb-advanced-pattern-design)  
 >2.[Mongoose官方文档——Aggregate](https://mongoosejs.com/docs/api.html#Aggregate)
 
+### **收藏功能的设计**  
+
+>参考文档：[mongodb中实现数字自增和自减](http://www.01happy.com/mongodb-inc-and-dec/)  
+
+&emsp;&emsp;考虑到在实际情况中，需要实时地实现收藏与未收藏状态的切换，频繁地访问网络资源会影响到小程序的性能，所以想到可以在本地存储收藏的状态，按照`{gId:true}`的键值对将用户收藏情况存储在本地，在加载状态的时候读取本地的缓存，在改变状态的时候只要对服务器端的收藏总数进行更新。这样虽然会出现本地缓存消失服务器端的收藏总数无法更新的情况，但是在可接受范围内保证了单页面的性能。
+```html
+<!--视图层-->
+<view bindtap='changeFavor'>
+  <image wx:if="{{hasFavor}}" src="/images/gtab/f_s.png" />
+  <image wx:else src="/images/gtab/f.png" />
+</view>
+```
+```js
+ //逻辑层
+  changeFavor: function() {
+    let that = this,
+        hf = that.data.hasFavor,  //记录收藏的状态，用来更新视图层按钮
+        fnum = 0;
+    if (hf == false) { //未收藏，在缓存中添加id键，数据库中favor增量置1
+      wx.setStorageSync(this.data.gId, true);
+      hf = true;
+      fnum = 1;
+    } else { //已收藏，删除缓存中的id键，数据库favor增量置-1
+      wx.removeStorageSync(this.data.gId);
+      hf = false;
+      fnum = -1;
+    }
+    wx.request({...}) //更新服务器端收藏总数
+    that.setData({
+      hasFavor: hf,
+      favor: that.data.favor + fnum
+    })
+  }
+```
+&emsp;&emsp;在服务端只需要上面的参考文档，利用MongoDB的`$inc`指令对数据更新`db.collection.update({"_id":gId},{$inc:{favor:fnum}})`，分别对收藏数进行+1或-1的操作即可。
+
+
 
 [返回目录](#目录)
 
