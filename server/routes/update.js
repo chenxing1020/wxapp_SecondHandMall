@@ -4,6 +4,18 @@ var express=require('express'),
 var router=express.Router();
 var goodModel=Model.goodModel;
 
+router.put('/favor',function(req,res,nexy){
+    let gId=req.body.gId,
+        fnum=req.body.fnum;
+    goodModel.updateOne({"_id":gId},{$inc:{favor:fnum}},(err,docs)=>{
+        if (!err) {
+            let fstate="";
+            if (fnum==1) fstate="收藏成功";
+            else fstate="收藏取消";
+            res.status(200).json({fstate:fstate});
+        }
+    })
+})
 
 
 module.exports=router;

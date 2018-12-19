@@ -15,7 +15,7 @@ var goodSchema = new mongoose.Schema({
     oriPrice: Number,
     imgList: Array,
     createAt: { type: Date, default: Date.now },
-    favor: Number
+    favor: {type:Number,default:0}
 }, { versionKey: false });
 Model.goodModel = mongoose.model('goodModel', goodSchema);    //goodModel即collection名,在mongdb中会生成
 

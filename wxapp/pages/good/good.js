@@ -15,7 +15,8 @@ Page({
     swiperCurrent: 0,
     userInfo: {},
     hasUserInfo: false,
-    hasFavor: false
+    hasFavor: false,
+    favor: 0
   },
 
   onLoad: function(options) {
@@ -38,7 +39,8 @@ Page({
         that.setData({
           gData: res.data.gData,
           cmtData: res.data.cmtData,
-          hasFavor: hf
+          hasFavor: hf,
+          favor: res.data.gData.favor
         })
       },
     });
@@ -146,20 +148,39 @@ Page({
     this.data.cmt = e.detail.value;
   },
 
-  //收藏
+  //单击收藏状态改变
   changeFavor: function() {
     let that = this;
     let hf = that.data.hasFavor;
-    console.log(hf);
-    if (hf == false) {
+    let fnum = 0;
+    if (hf == false) { //未收藏，在缓存中添加id键，数据库中favor增量置1
       wx.setStorageSync(this.data.gId, true);
       hf = true;
-    } else {
+      fnum = 1;
+    } else { //已收藏，删除缓存中的id键，数据库favor增量置-1
       wx.removeStorageSync(this.data.gId);
       hf = false;
+      fnum = -1;
     }
+    wx.request({
+      url: app.globalData.requestUrl + 'favor',
+      method: 'PUT',
+      data: {
+        gId: that.data.gId,
+        fnum: fnum
+      },
+      success: (res) => {
+        wx.showToast({
+          title: res.data.fstate,
+          icon: 'none',
+          mask: true,
+          duration: 2000
+        })
+      }
+    })
     that.setData({
-      hasFavor: hf
+      hasFavor: hf,
+      favor: that.data.favor + fnum
     })
 
   }

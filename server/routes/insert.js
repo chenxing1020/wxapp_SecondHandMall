@@ -66,6 +66,4 @@ router.post('/submitCmt', function (req, res, next) {
     })
 })
 
-/*router.post('/addFavor')*/
-
 module.exports = router;

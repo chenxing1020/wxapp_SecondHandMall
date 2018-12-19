@@ -29,7 +29,7 @@
       </view>
 
       <view class="cell_flex" style="justify-content:flex-end">
-        <text class="cell_text">收藏 {{gData.favor}}</text>
+        <text class="cell_text">收藏 {{favor}}</text>
       </view>
     </view>
     <!---->
