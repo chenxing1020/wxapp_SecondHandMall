@@ -23,7 +23,7 @@
   - [数据的分页加载](#数据的分页加载)
   - [小程序的登录态和用户信息管理](#小程序的登录态和用户信息管理)
   - [七牛云对象存储](#七牛云对象存储)
-  - [小程序的上拉刷新和下拉加载](#小程序的上拉刷新和下拉加载)
+  - [小程序的下拉刷新和上滑加载](#小程序的下拉刷新和上滑加载)
 - [环境部署](https://github.com/chenxing1020/wxapp_SecondHandMall/blob/master/Environment.md)
 
 
@@ -511,7 +511,31 @@ bindInput: function(e) {
 [返回目录](#目录)
 
 ---
-## **小程序的上拉刷新和下拉加载**
+## **小程序的下拉刷新和上滑加载**  
+
+>参考文档：[微信小程序实战篇-下拉刷新与加载更多](https://blog.csdn.net/u012927188/article/details/73369201)  
+
+&emsp;&emsp;在[数据的分页加载](#数据的分页加载)的时候提到过加载的问题，当时的交互是通过监听scroll-view的`bindscrolltolower`事件来实现上滑加载更多，但是随着需求的增多，用户需要对当前页面进行数据更新，这个时候下拉刷新的交互就显得很重要，但是原生scroll-view自带的`bindscrolltoupper`事件没有显示的响应动作，而且刷新数据的监听事件很容易频繁触发（每次触碰到上边界就执行），这样一来既增加了后台的负载压力，二来也会增加前端的渲染压力。  
+&emsp;&emsp;显然需要改变代码实现的思路，官方提供了一个定义在Page中的`onPullDownRefresh()`的处理函数，用来监听页面的下拉刷新事件，但是需要特别注意的是，该方法和scroll-view存在不兼容的情况，所以索性将scroll-view去掉，直接使用view即可。同样的因为不再使用scroll-view，页面的触底事件通过`onReachBottom()`方法处理，代码框架如下：
+```js
+//首先在json文件中配置
+"enablePullDownRefresh":true,
+"backgroundTextStyle": "dark" //使得下拉刷新的三个点更明显
+```
+```js
+//在逻辑层处理事件
+onPullDownRefresh:function(){
+  wx.stopPullDownRefresh();
+  /*数据操作*/
+  console.log("上拉刷新");
+},
+onReachBottom:function(){
+  /*数据操作*/
+  console.log("下拉加载");
+}
+```
+
+
 
 [返回目录](#目录)
 
