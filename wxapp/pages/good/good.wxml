@@ -122,7 +122,7 @@
       <text wx:if="{{hasFavor}}" class="text_warp">已收藏</text>
       <text wx:else class="text_warp">收藏</text>
     </view>
-    <view class="bottom_tab">
+    <view class="bottom_tab" bindtap='sendText'>
       <image class="tab_icon" src="/images/gtab/m.png" />
       <text class="text_warp">私信</text>
     </view>
@@ -132,4 +132,12 @@
     </view>
   </view>
   <!---->
+</view>
+
+<view class="mask" wx:if="{{showModal}}">
+  <view>
+    <textarea class="txt" maxlength="-1" placeholder='推荐使用其他社交软件进行联系'></textarea>
+    <button class="sub-btn" bindtap='sub'></button>
+    <button class="sub-btn" bindtap='sub'>提交</button>
+  </view>
 </view>

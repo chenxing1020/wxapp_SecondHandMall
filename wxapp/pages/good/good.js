@@ -16,7 +16,8 @@ Page({
     userInfo: {},
     hasUserInfo: false,
     hasFavor: false,
-    favor: 0
+    favor: 0,
+    showModal:false,
   },
 
   onLoad: function(options) {
@@ -182,6 +183,18 @@ Page({
       hasFavor: hf,
       favor: that.data.favor + fnum
     })
+  },
 
+  //发送私信
+  sendText:function(){
+    this.setData({
+      showModal:true
+    })
+  },
+
+  exit:function(){
+    this.setData({
+      showModal:false
+    })
   }
 })
