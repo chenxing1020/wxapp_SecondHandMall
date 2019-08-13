@@ -28,26 +28,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
 
-var env = 'development';//开发版
-//var env = 'stable';//正式版
+app.use(errorHandler({ dumpExceptions: true, showStack: true }));
+app.listen(3000,function(){
+    console.log("server is listening in 3000");
+});
 
-if ('development' == env) {
-    app.use(errorHandler({ dumpExceptions: true, showStack: true }));
-    app.listen(3000,function(){
-        console.log("server is listening in 3000");
-    });
-} else if ('stable' == env) {
-    var https = require('https');
-    fs = require('fs');
-    var options = {
-        key: fs.readFileSync('./cert-1540518146377_www.clhw.xyz.key'),
-        cert: fs.readFileSync('./cert-1540518146377_www.clhw.xyz.crt'),
-    };
-    var httpsServer = https.createServer(options, app);
-    httpsServer.listen(443, function () {
-        console.log('Https server is running on 443 port');
-    });
-}
 
 //查询路由
 app.use('/', queryRouter);

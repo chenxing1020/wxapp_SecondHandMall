@@ -160,3 +160,26 @@ if ('test' == env) {
 
 
 &emsp;&emsp;在参照参考文档3绑定域名前，搞清域名解析的概念，域名解析就是域名到IP地址的转换过程：其中，A记录就是制定域名对应的IP地址记录；CNAME记录就是别名指向，用子域名来代替IP地址。所以绑定域名就相当于把自己备案的二级域名解析到七牛的服务器上。
+
+---
+## nginx配置https
+
+>参考文档：  
+>1. [使用Nginx反向代理nodejs http和https](https://www.jianshu.com/p/6a02a4f17701)  
+>2. [Nginx安装SSL配置HTTPS超详细完整全过程](https://www.hack520.com/481.html)
+
+配置nginx.conf定义http的重定向。
+
+```
+server {
+    server_name www.clhw.xyz;
+    listen 443 ssl;
+    ssl_certificate /root/nginx/cert/cert.pem;
+    ssl_certificate_key /root/nginx/cert/cert.key;
+    ssl_session_timeout 5m;
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header X-Nginx-Proxy true;
+    }
+}
+```
