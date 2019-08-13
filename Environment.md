@@ -166,20 +166,25 @@ if ('test' == env) {
 
 >参考文档：  
 >1. [使用Nginx反向代理nodejs http和https](https://www.jianshu.com/p/6a02a4f17701)  
->2. [Nginx安装SSL配置HTTPS超详细完整全过程](https://www.hack520.com/481.html)
+>2. [Nginx安装SSL配置HTTPS超详细完整全过程](https://www.hack520.com/481.html)  
+>3. [Nginx 服务器证书安装](https://cloud.tencent.com/document/product/400/35244)
 
 配置nginx.conf定义http的重定向。
 
 ```
 server {
-    server_name www.clhw.xyz;
-    listen 443 ssl;
-    ssl_certificate /root/nginx/cert/cert.pem;
-    ssl_certificate_key /root/nginx/cert/cert.key;
-    ssl_session_timeout 5m;
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_set_header X-Nginx-Proxy true;
-    }
+  server_name www.clhw.xyz; #填写绑定证书的域名
+  listen 443 ssl;
+  ssl_certificate /root/nginx/cert/cert.crt;
+  ssl_certificate_key /root/nginx/cert/cert.key;
+  ssl_session_timeout 5m;
+  ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+  ssl_prefer_server_ciphers on;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+  location / {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_set_header X-Nginx-Proxy true;
+  }
 }
 ```
